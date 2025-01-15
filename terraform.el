@@ -20,14 +20,14 @@
 (defun colorize-compilation-buffer ()
   (ansi-color-apply-on-region compilation-filter-start (point)))
 
-(define-derived-mode terraform-cli-mode compilation-mode "Terraform CLI"
+(define-derived-mode terraform-cli-mode comint-mode "Terraform CLI"
   "Major mode for the Terraform compilation buffer."
   (setq major-mode 'terraform-cli-mode)
   (setq mode-name "Terraform CLI")
-  (add-hook 'compilation-filter-hook 'colorize-compilation-buffer 0 t)
-  (setq-local truncate-lines t))
+  (add-hook 'compilation-filter-hook 'colorize-compilation-buffer 0 t))
 
 (defun run-cmd (buffer-name cmd-and-args callback)
+  (add-hook 'terraform-cli-mode-hook 'compilation-shell-minor-mode)
   (let ((compilation-buffer
 		 (compilation-start (string-join cmd-and-args " ") 'terraform-cli-mode)))
     (if (get-buffer buffer-name) nil (with-current-buffer compilation-buffer (rename-buffer buffer-name)))))
